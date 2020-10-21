@@ -203,6 +203,7 @@ int main(int Argc, const char **Argv) {
       ("emit-cg-as-text", "Emit the call graph as text")
       ("emit-cg-as-dot", "Emit the call graph as DOT graph")
       ("emit-cg-as-json", "Emit the call graph as JSON")
+      ("emit-fp-as-text", "Emit the function pointer results as text")
       ("emit-pta-as-text", "Emit the points-to information as text")
       ("emit-pta-as-dot", "Emit the points-to information as DOT graph")
       ("emit-pta-as-json", "Emit the points-to information as JSON")
@@ -398,6 +399,9 @@ int main(int Argc, const char **Argv) {
   }
   if (PhasarConfig::VariablesMap().count("emit-cg-as-json")) {
     EmitterOptions |= AnalysisControllerEmitterOptions::EmitCGAsJson;
+  }
+  if (PhasarConfig::VariablesMap().count("emit-fp-as-text")) {
+    EmitterOptions |= AnalysisControllerEmitterOptions::EmitFPAsText;
   }
   if (PhasarConfig::VariablesMap().count("emit-pta-as-text")) {
     EmitterOptions |= AnalysisControllerEmitterOptions::EmitPTAAsText;

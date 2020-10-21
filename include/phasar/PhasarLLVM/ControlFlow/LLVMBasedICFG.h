@@ -61,6 +61,7 @@ private:
   bool UserPTInfos = true;
   LLVMTypeHierarchy *TH;
   LLVMPointsToInfo *PT;
+  std::map<const llvm::Value*, std::set<const llvm::Function *>> FP;
   std::unique_ptr<Resolver> Res;
   std::unordered_set<const llvm::Function *> VisitedFunctions;
   /// Keeps track of the call-sites already resolved
@@ -226,6 +227,8 @@ public:
 
   using LLVMBasedCFG::print; // tell the compiler we wish to have both prints
   void print(std::ostream &OS = std::cout) const override;
+
+  void printFP(std::ostream &OS = std::cout) const;
 
   void printAsDot(std::ostream &OS = std::cout,
                   bool printEdgeLabels = true) const;

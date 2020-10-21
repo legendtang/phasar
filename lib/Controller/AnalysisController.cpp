@@ -355,6 +355,14 @@ void AnalysisController::emitRequestedHelperAnalysisResults() {
       PT.printAsJson();
     }
   }
+  if (EmitterOptions & AnalysisControllerEmitterOptions::EmitFPAsText) {
+    if (!ResultDirectory.empty()) {
+      std::ofstream OFS(ResultDirectory.string() + "/psr-fp.txt");
+      ICF.printFP(OFS);
+    } else {
+      ICF.printFP();
+    }
+  }
   if (EmitterOptions & AnalysisControllerEmitterOptions::EmitCGAsText) {
     if (!ResultDirectory.empty()) {
       std::ofstream OFS(ResultDirectory.string() + "/psr-cg.txt");

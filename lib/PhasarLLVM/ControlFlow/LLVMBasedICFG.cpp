@@ -84,7 +84,7 @@ std::string LLVMBasedICFG::EdgeProperties::getCallSiteAsString() const {
 // PT in case any of them is allocated within the constructor. To this end, we
 // set UserTHInfos and UserPTInfos to true here.
 LLVMBasedICFG::LLVMBasedICFG(const LLVMBasedICFG &ICF)
-    : IRDB(ICF.IRDB), CGType(ICF.CGType), SF(ICF.SF), TH(ICF.TH), PT(ICF.PT),
+    : IRDB(ICF.IRDB), CGType(ICF.CGType), SF(ICF.SF), TH(ICF.TH), PT(ICF.PT), FP(ICF.FP),
       // TODO copy resolver
       Res(nullptr), VisitedFunctions(ICF.VisitedFunctions),
       CallGraph(ICF.CallGraph), FunctionVertexMap(ICF.FunctionVertexMap) {}
@@ -194,8 +194,10 @@ void LLVMBasedICFG::constructionWalker(const llvm::Function *F,
             // call the resolve routine
             if (LLVMBasedICFG::isVirtualFunctionCall(CS.getInstruction())) {
               PossibleTargets = Resolver.resolveVirtualCall(CS);
+              FP.emplace(CS.getInstruction(), PossibleTargets);
             } else {
               PossibleTargets = Resolver.resolveFunctionPointer(CS);
+              FP.emplace(CS.getInstruction(), PossibleTargets);
             }
           }
         }
@@ -551,6 +553,18 @@ void LLVMBasedICFG::print(ostream &OS) const {
     for (boost::tie(EI, EIEnd) = boost::out_edges(*UI, CallGraph); EI != EIEnd;
          ++EI) {
       OS << CallGraph[target(*EI, CallGraph)].getFunctionName() << " ";
+    }
+    OS << '\n';
+  }
+}
+
+void LLVMBasedICFG::printFP(ostream &OS) const {
+  OS << "Function Pointer:\n";
+
+  for (const auto& V : FP) {
+    OS << "CallSite:\t" << llvmIRToString(V.first) << "\nPoints-to:\t";
+    for (const auto* F : V.second) {
+      OS << F->getName().str() << " ";
     }
     OS << '\n';
   }

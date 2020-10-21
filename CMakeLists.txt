@@ -247,6 +247,11 @@ if (PHASAR_BUILD_IR)
   add_subdirectory(test)
 endif()
 
+if(ENABLE_ASAN)
+  set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,undefined -fuse-ld=gold")
+  set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address,undefined -fuse-ld=gold")
+endif()
+
 set(INCLUDE_INSTALL_DIR include/ CACHE PATH "Install dir of headers")
 
 # Install targets of phasar-llvm, other executables, and libraries are to be
